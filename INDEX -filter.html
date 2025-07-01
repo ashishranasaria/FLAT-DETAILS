@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flat Dues App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      background: #fff;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .result {
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 6px;
+    }
+
+    .result p {
+      margin: 8px 0;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Flat Maintenance Dues</h1>
+
+    <label for="blockSelect">Select Block:</label>
+    <select id="blockSelect">
+      <option value="">-- Choose Block --</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+    </select>
+
+    <label for="flatSelect">Select Flat Number:</label>
+    <select id="flatSelect">
+      <option value="">-- Choose Flat --</option>
+    </select>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- Load your DATA.js -->
+  <script src="DATA.js"></script>
+  <script>
+    const blockSelect = document.getElementById('blockSelect');
+    const flatSelect = document.getElementById('flatSelect');
+    const resultDiv = document.getElementById('result');
+
+    // When block is selected
+    blockSelect.addEventListener('change', () => {
+      const selectedBlock = blockSelect.value.trim().toUpperCase();
+      flatSelect.innerHTML = '<option value="">-- Choose Flat --</option>';
+      resultDiv.innerHTML = '';
+
+      if (!selectedBlock) return;
+
+      const filteredFlats = flats.filter(f =>
+        f.flat.trim().toUpperCase().startsWith(selectedBlock)
+      );
+
+      if (filteredFlats.length === 0) {
+        const option = document.createElement('option');
+        option.textContent = "No flats available";
+        flatSelect.appendChild(option);
+        return;
+      }
+
+      filteredFlats.forEach(flat => {
+        const option = document.createElement('option');
+        option.value = flat.flat.trim();
+        option.textContent = flat.flat.trim();
+        flatSelect.appendChild(option);
+      });
+    });
+
+    // When flat is selected
+    flatSelect.addEventListener('change', () => {
+      const selectedFlat = flatSelect.value.trim();
+      const flat = flats.find(f => f.flat.trim() === selectedFlat);
+
+      if (!flat) {
+        resultDiv.innerHTML = '';
+        return;
+      }
+
+      resultDiv.innerHTML = `
+        <p><strong>Flat No:</strong> ${flat.flat}</p>
+        <p><strong>Area (Sq Ft):</strong> ${flat.area}</p>
+        <p><strong>Amount (6 months):</strong> ₹${flat.maintenanceAmount.toLocaleString()}</p>
+        <p><strong>Special Fund (2025-26):</strong> ₹${flat.specialFund.toLocaleString()}</p>
+      `;
+    });
+  </script>
+</body>
+</html>
